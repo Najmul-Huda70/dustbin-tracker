@@ -12,8 +12,6 @@ import {
   Clock,
   ChevronRight,
   FlaskConical,
-  Compass,
-  Navigation,
   RefreshCw,
   Sparkles,
 } from "lucide-react";
@@ -177,7 +175,6 @@ export default function MapPage() {
   const [statusFilter, setStatusFilter] = useState<"ALL" | "CRITICAL" | "ATTENTION" | "NORMAL">("ALL");
   const [selectedZone, setSelectedZone] = useState<string>("ALL");
   const [hoveredBinId, setHoveredBinId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"interactive" | "google">("interactive");
 
   const zones = useMemo(() => ["ALL", "Dhanmondi", "Gulshan", "Mirpur", "Motijheel", "Uttara", "Old Dhaka"], []);
 
@@ -225,30 +222,10 @@ export default function MapPage() {
             </p>
           </div>
 
-          {/* Mode Switcher */}
-          <div className="flex items-center gap-2 self-start md:self-auto bg-white p-1 rounded-2xl border border-emerald-200 shadow-2xs">
-            <button
-              onClick={() => setViewMode("interactive")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                viewMode === "interactive"
-                  ? "bg-emerald-600 text-white shadow-sm"
-                  : "text-zinc-600 hover:text-emerald-700"
-              }`}
-            >
-              <Compass className="w-3.5 h-3.5" />
-              Interactive Vector Map
-            </button>
-            <button
-              onClick={() => setViewMode("google")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                viewMode === "google"
-                  ? "bg-emerald-600 text-white shadow-sm"
-                  : "text-zinc-600 hover:text-emerald-700"
-              }`}
-            >
-              <Navigation className="w-3.5 h-3.5" />
-              Google Maps View
-            </button>
+          {/* Live System Indicator */}
+          <div className="flex items-center gap-2 self-start md:self-auto bg-white px-4 py-2 rounded-2xl border border-emerald-200 shadow-2xs text-xs font-bold text-emerald-900">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>6 Real-Time IoT Dustbins Active</span>
           </div>
         </div>
 
@@ -329,12 +306,9 @@ export default function MapPage() {
           </div>
         </div>
 
-        {/* ── FULL-WIDTH MAP CANVAS (NO RIGHT SIDEBAR) ── */}
+        {/* ── FULL-WIDTH MAP CANVAS ── */}
         <div className="w-full bg-white rounded-3xl border border-emerald-200 shadow-md p-2 sm:p-3 relative">
-
-          {viewMode === "interactive" ? (
-            /* We allow overflow-visible on container so popovers floating on edges are NEVER clipped! */
-            <div className="relative w-full h-[660px] sm:h-[720px] bg-[#edf4f0] rounded-2xl select-none overflow-hidden">
+          <div className="relative w-full h-[660px] sm:h-[720px] bg-[#edf4f0] rounded-2xl select-none overflow-hidden">
               
               {/* Visual Dhaka Cartographic Canvas */}
               <svg className="absolute inset-0 w-full h-full opacity-45 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
@@ -606,23 +580,6 @@ export default function MapPage() {
               </div>
 
             </div>
-          ) : (
-            /* Google Maps View */
-            <div className="w-full h-[660px] sm:h-[720px] rounded-2xl overflow-hidden relative">
-              <iframe
-                title="Google Live Dustbin Map"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-                src={`https://maps.google.com/maps?q=Dhaka+Bangladesh&t=&z=13&ie=UTF8&iwloc=&output=embed`}
-                className="w-full h-full"
-              />
-            </div>
-          )}
-
         </div>
 
         {/* ── Bottom Summary Row: 6 Bins Status Strip ── */}
