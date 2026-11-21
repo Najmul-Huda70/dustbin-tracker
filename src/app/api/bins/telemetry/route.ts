@@ -76,7 +76,6 @@ export async function POST(req: NextRequest) {
             latitude: 23.7465,
             longitude: 90.376,
             totalDepthCm: totalDepth,
-            moderatorEmail: process.env.DEFAULT_MODERATOR_EMAIL || "tempostand7@gmail.com",
           },
         },
         { upsert: true, new: true }
