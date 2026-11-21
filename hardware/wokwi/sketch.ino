@@ -32,9 +32,7 @@ const char* WIFI_SSID = "Wokwi-GUEST";
 const char* WIFI_PASSWORD = "";
 
 // DustbinTracker Cloud API Endpoint
-// Replace with your Vercel live URL or ngrok URL for local dev
-// Example: "https://dustbintracker.vercel.app/api/bins/telemetry"
-const char* API_ENDPOINT = "https://dustbin-tracker-bit-riser.vercel.app/api/bins/telemetry";
+const char* API_ENDPOINT = "https://dustbintracker.vercel.app/api/bins/telemetry";
 
 unsigned long lastSendTime = 0;
 const unsigned long SEND_INTERVAL_MS = 15000; // Send telemetry every 15 seconds
