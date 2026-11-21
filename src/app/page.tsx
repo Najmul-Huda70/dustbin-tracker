@@ -699,11 +699,6 @@ export default function HomePage() {
           </div>
         </FadeSlideIn>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-emerald-100 py-6 text-center text-xs text-emerald-950/50 font-medium">
-        © 2026 DustbinTracker · Smart IoT Waste Management System · Smart Waste. Cleaner Tomorrow.
-      </footer>
     </div>
   );
 }
