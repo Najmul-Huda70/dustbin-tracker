@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, QrCode, Menu, X, LogOut } from "lucide-react";
+import { MapPin, QrCode, Menu, X, LogOut, FlaskConical } from "lucide-react";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -51,6 +51,10 @@ export default function Navbar() {
             <Link href="/report" className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold text-emerald-950/80 hover:text-emerald-700 hover:bg-emerald-50/80 transition-colors">
               <QrCode className="w-4 h-4 text-teal-600" />
               Report Issue
+            </Link>
+            <Link href="/simulation" className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold text-blue-700 hover:text-blue-800 hover:bg-blue-50/80 transition-colors border border-blue-200 hover:border-blue-300 bg-blue-50/60">
+              <FlaskConical className="w-4 h-4 text-blue-600" />
+              Simulation
             </Link>
 
             {/* Divider */}
@@ -105,6 +109,9 @@ export default function Navbar() {
             </Link>
             <Link href="/report" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-base font-semibold text-emerald-950 hover:bg-emerald-50">
               <QrCode className="w-5 h-5 text-teal-600" /> Report Issue
+            </Link>
+            <Link href="/simulation" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-base font-semibold text-blue-700 hover:bg-blue-50 border border-blue-200 bg-blue-50/60">
+              <FlaskConical className="w-5 h-5 text-blue-600" /> Simulation
             </Link>
             <div className="pt-3 mt-2 border-t border-emerald-100">
               <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold bg-white border border-emerald-200 text-emerald-950 hover:bg-emerald-50 transition-colors">
