@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Wifi,
   Cpu,
@@ -15,6 +16,7 @@ import {
   Loader2,
   BellOff,
   ShieldAlert,
+  Sparkles,
 } from "lucide-react";
 
 // ─── Bin definitions (6 bins) ─────────────────────────────────────────────────
@@ -29,50 +31,90 @@ const BINS = [
 
 type SendState = "idle" | "sending" | "sent" | "error" | "blocked";
 
-// ─── Fill gauge ───────────────────────────────────────────────────────────────
+// ─── Smooth Framer Motion Fill Gauge ──────────────────────────────────────────
 function FillGauge({ fillLevel, status }: { fillLevel: number; status: string }) {
   const radius = 38;
   const circ = 2 * Math.PI * radius;
   const offset = circ - (fillLevel / 100) * circ;
   const color = status === "critical" ? "#dc2626" : status === "attention" ? "#d97706" : "#059669";
+
   return (
     <div className="relative flex items-center justify-center flex-shrink-0">
       <svg width="88" height="88" viewBox="0 0 88 88" className="-rotate-90">
         <circle cx="44" cy="44" r={radius} fill="none" stroke="#e5e7eb" strokeWidth="8" />
-        <circle cx="44" cy="44" r={radius} fill="none" stroke={color} strokeWidth="8"
-          strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
-          style={{ transition: "stroke-dashoffset 0.4s ease, stroke 0.3s ease" }}
+        <motion.circle
+          cx="44"
+          cy="44"
+          r={radius}
+          fill="none"
+          strokeWidth="8"
+          strokeDasharray={circ}
+          animate={{
+            strokeDashoffset: offset,
+            stroke: color,
+          }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          strokeLinecap="round"
         />
       </svg>
       <div className="absolute text-center">
-        <div className="text-base font-black leading-none tabular-nums" style={{ color }}>{fillLevel}%</div>
+        <motion.div
+          key={fillLevel}
+          initial={{ scale: 0.9, opacity: 0.8 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.2 }}
+          className="text-base font-black leading-none tabular-nums"
+          style={{ color }}
+        >
+          {fillLevel}%
+        </motion.div>
         <div className="text-[8px] font-bold text-zinc-400 uppercase tracking-wide mt-0.5">FILL</div>
       </div>
     </div>
   );
 }
 
-// ─── Bin SVG ──────────────────────────────────────────────────────────────────
+// ─── Smooth Framer Motion Bin Illustration ────────────────────────────────────
 function BinSVG({ fillLevel, status, uid }: { fillLevel: number; status: string; uid: string }) {
   const fillColor = status === "critical" ? "#dc2626" : status === "attention" ? "#d97706" : "#059669";
-  const fillH = (fillLevel / 100) * 52;
+  const fillH = (fillLevel / 100) * 50;
   const clipId = `clip-${uid}`;
+
   return (
     <svg width="44" height="68" viewBox="0 0 44 68" className="flex-shrink-0">
       <rect x="4" y="16" width="36" height="50" rx="4" fill="#e5e7eb" />
       <clipPath id={clipId}>
-        <rect x="4" y={16 + (50 - fillH)} width="36" height={fillH} />
+        <motion.rect
+          x="4"
+          width="36"
+          rx="4"
+          animate={{
+            y: 16 + (50 - fillH),
+            height: fillH,
+          }}
+          transition={{ type: "spring", damping: 18, stiffness: 120 }}
+        />
       </clipPath>
-      <rect x="4" y="16" width="36" height="50" rx="4" fill={fillColor} opacity="0.8" clipPath={`url(#${clipId})`} />
+      <motion.rect
+        x="4"
+        y="16"
+        width="36"
+        height="50"
+        rx="4"
+        animate={{ fill: fillColor }}
+        transition={{ duration: 0.3 }}
+        opacity="0.82"
+        clipPath={`url(#${clipId})`}
+      />
       <rect x="1" y="10" width="42" height="8" rx="3" fill="#9ca3af" />
-      <rect x="14" y="4"  width="16" height="8" rx="4" fill="#9ca3af" />
+      <rect x="14" y="4" width="16" height="8" rx="4" fill="#9ca3af" />
       <line x1="16" y1="24" x2="16" y2="58" stroke="#d1d5db" strokeWidth="1.5" />
       <line x1="28" y1="24" x2="28" y2="58" stroke="#d1d5db" strokeWidth="1.5" />
     </svg>
   );
 }
 
-// ─── Hardware flow ────────────────────────────────────────────────────────────
+// ─── Smooth Hardware Flow Diagram ─────────────────────────────────────────────
 function HardwareFlowDiagram() {
   const steps = [
     { icon: <Radio className="w-4 h-4" />,    label: "HC-SR04",    sub: "Ultrasonic",   color: "bg-violet-100 text-violet-700 border-violet-200" },
@@ -81,17 +123,29 @@ function HardwareFlowDiagram() {
     { icon: <Database className="w-4 h-4" />,  label: "MongoDB",    sub: "Atlas Cloud",  color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
     { icon: <Mail className="w-4 h-4" />,      label: "Nodemailer", sub: "Email Alert",  color: "bg-orange-100 text-orange-700 border-orange-200" },
   ];
+
   return (
     <div className="w-full overflow-x-auto pb-1">
       <div className="flex items-center gap-1 min-w-max mx-auto justify-center">
         {steps.map((s, i) => (
           <React.Fragment key={s.label}>
-            <div className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl border-2 ${s.color} min-w-[70px]`}>
+            <motion.div
+              whileHover={{ scale: 1.05, y: -2 }}
+              transition={{ duration: 0.2 }}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl border-2 ${s.color} min-w-[70px] shadow-2xs cursor-default`}
+            >
               {s.icon}
               <div className="text-[10px] font-bold leading-tight text-center">{s.label}</div>
               <div className="text-[9px] opacity-70 text-center">{s.sub}</div>
-            </div>
-            {i < steps.length - 1 && <ChevronRight className="w-3.5 h-3.5 text-zinc-300 flex-shrink-0" />}
+            </motion.div>
+            {i < steps.length - 1 && (
+              <motion.div
+                animate={{ x: [0, 3, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5, delay: i * 0.2 }}
+              >
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
+              </motion.div>
+            )}
           </React.Fragment>
         ))}
       </div>
@@ -99,7 +153,7 @@ function HardwareFlowDiagram() {
   );
 }
 
-// ─── Bin Card ─────────────────────────────────────────────────────────────────
+// ─── Single Bin Card with Framer Motion ────────────────────────────────────────
 function BinCard({
   bin,
   idx,
@@ -129,7 +183,7 @@ function BinCard({
     normal:    { border: "border-emerald-200", headerBg: "bg-emerald-50", badge: "bg-emerald-100 text-emerald-700", label: "NORMAL" },
   }[status];
 
-  // If email becomes valid while currently at critical, allow trigger
+  // If email becomes valid while currently at critical, allow auto-trigger
   useEffect(() => {
     if (status === "critical" && !hasSentRef.current && emailValid) {
       hasSentRef.current = true;
@@ -187,17 +241,33 @@ function BinCard({
     }
   };
 
+  const cardVariants = {
+    hidden: { opacity: 0, y: 24 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] as const },
+    },
+  };
+
   return (
-    <div className={`bg-white rounded-2xl border-2 ${sc.border} shadow-sm overflow-hidden flex flex-col transition-all duration-300 hover:shadow-md`}>
+    <motion.div
+      variants={cardVariants}
+      whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
+      className={`bg-white rounded-2xl border-2 ${sc.border} shadow-sm overflow-hidden flex flex-col transition-colors duration-300`}
+    >
       {/* ── Header ── */}
-      <div className={`${sc.headerBg} px-4 py-3 flex items-center gap-3`}>
+      <div className={`${sc.headerBg} px-4 py-3 flex items-center gap-3 transition-colors duration-300`}>
         <BinSVG fillLevel={fillLevel} status={status} uid={`bin-${idx}`} />
         <div className="flex-1 min-w-0">
           <div className="font-bold text-zinc-900 text-sm leading-tight truncate">{bin.name}</div>
           <div className="text-xs text-zinc-500 mt-0.5 truncate">{bin.location}</div>
-          <span className={`inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full ${sc.badge}`}>
+          <motion.span
+            layout
+            className={`inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full ${sc.badge}`}
+          >
             {sc.label}
-          </span>
+          </motion.span>
         </div>
         <FillGauge fillLevel={fillLevel} status={status} />
       </div>
@@ -258,76 +328,122 @@ function BinCard({
           </div>
         </div>
 
-        {/* ── Status panel (feedback) ── */}
+        {/* ── Status panel with AnimatePresence ── */}
         <div className="mt-4 pt-2 border-t border-zinc-100">
-          {sendState === "sending" && (
-            <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5 text-xs font-bold text-blue-700 animate-pulse">
-              <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
-              <span>Sending alert email to {sharedEmail}…</span>
-            </div>
-          )}
+          <AnimatePresence mode="wait">
+            {sendState === "sending" && (
+              <motion.div
+                key="sending"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5 text-xs font-bold text-blue-700"
+              >
+                <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
+                <span>Sending alert email to {sharedEmail}…</span>
+              </motion.div>
+            )}
 
-          {sendState === "sent" && (
-            <div className="flex items-start gap-2 bg-emerald-50 border border-emerald-300 rounded-xl px-3 py-2.5 text-xs font-bold text-emerald-800">
-              <CheckCircle className="w-4 h-4 flex-shrink-0 text-emerald-600 mt-0.5" />
-              <div>
-                <div>Mail Sent Successfully ✓</div>
-                <div className="font-normal text-emerald-700 text-[10px] mt-0.5">
-                  Delivered to <strong>{sharedEmail}</strong>! Move slider &gt;20 cm to reset.
+            {sendState === "sent" && (
+              <motion.div
+                key="sent"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="flex items-start gap-2 bg-emerald-50 border border-emerald-300 rounded-xl px-3 py-2.5 text-xs font-bold text-emerald-800"
+              >
+                <CheckCircle className="w-4 h-4 flex-shrink-0 text-emerald-600 mt-0.5" />
+                <div>
+                  <div>Mail Sent Successfully ✓</div>
+                  <div className="font-normal text-emerald-700 text-[10px] mt-0.5">
+                    Delivered to <strong>{sharedEmail}</strong>! Move slider &gt;20 cm to reset.
+                  </div>
                 </div>
-              </div>
-            </div>
-          )}
+              </motion.div>
+            )}
 
-          {sendState === "error" && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5 text-xs font-bold text-red-700">
-              <AlertTriangle className="w-4 h-4 flex-shrink-0 text-red-500" />
-              <span>Failed to send email. Check SMTP settings or try again.</span>
-            </div>
-          )}
+            {sendState === "error" && (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5 text-xs font-bold text-red-700"
+              >
+                <AlertTriangle className="w-4 h-4 flex-shrink-0 text-red-500" />
+                <span>Failed to send email. Check SMTP credentials or retry.</span>
+              </motion.div>
+            )}
 
-          {(sendState === "blocked" || (!emailValid && status === "critical")) && (
-            <div className="flex items-start gap-2 bg-amber-50 border border-amber-300 rounded-xl px-3 py-2.5 text-xs font-bold text-amber-800">
-              <ShieldAlert className="w-4 h-4 flex-shrink-0 text-amber-600 mt-0.5" />
-              <div className="flex-1">
-                <div>⚠️ Mail Sending Blocked</div>
-                <div className="font-normal text-amber-700 text-[10px] mt-0.5">
-                  No valid email provided.{" "}
-                  <button
-                    onClick={onFocusEmail}
-                    className="underline font-bold text-amber-900 hover:text-black cursor-pointer"
-                  >
-                    Enter your email above
-                  </button>{" "}
-                  to enable alerts.
+            {(sendState === "blocked" || (!emailValid && status === "critical")) && (
+              <motion.div
+                key="blocked"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-start gap-2 bg-amber-50 border border-amber-300 rounded-xl px-3 py-2.5 text-xs font-bold text-amber-800"
+              >
+                <ShieldAlert className="w-4 h-4 flex-shrink-0 text-amber-600 mt-0.5" />
+                <div className="flex-1">
+                  <div>⚠️ Mail Sending Blocked</div>
+                  <div className="font-normal text-amber-700 text-[10px] mt-0.5">
+                    No valid email provided.{" "}
+                    <button
+                      onClick={onFocusEmail}
+                      className="underline font-bold text-amber-900 hover:text-black cursor-pointer"
+                    >
+                      Enter your email above
+                    </button>{" "}
+                    to enable alerts.
+                  </div>
                 </div>
-              </div>
-            </div>
-          )}
+              </motion.div>
+            )}
 
-          {sendState === "idle" && status === "critical" && emailValid && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5 text-xs font-bold text-red-700">
-              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-              <span>Critical fill level reached (≥ 80%).</span>
-            </div>
-          )}
+            {sendState === "idle" && status === "critical" && emailValid && (
+              <motion.div
+                key="critical"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5 text-xs font-bold text-red-700"
+              >
+                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                <span>Critical fill level reached (≥ 80%).</span>
+              </motion.div>
+            )}
 
-          {sendState === "idle" && status === "attention" && (
-            <div className="flex items-center gap-2 bg-amber-50/80 border border-amber-200 rounded-xl px-3 py-2 text-xs text-amber-800 font-medium">
-              <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 text-amber-600" />
-              <span>Attention (50-79%). Slide ≤ 20 cm (≥ 80%) to trigger auto alert.</span>
-            </div>
-          )}
+            {sendState === "idle" && status === "attention" && (
+              <motion.div
+                key="attention"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-2 bg-amber-50/80 border border-amber-200 rounded-xl px-3 py-2 text-xs text-amber-800 font-medium"
+              >
+                <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 text-amber-600" />
+                <span>Attention (50-79%). Slide ≤ 20 cm (≥ 80%) for auto alert.</span>
+              </motion.div>
+            )}
 
-          {sendState === "idle" && status === "normal" && (
-            <div className="flex items-center gap-2 bg-emerald-50/80 border border-emerald-200 rounded-xl px-3 py-2 text-xs text-emerald-800 font-medium">
-              <BellOff className="w-3.5 h-3.5 flex-shrink-0 text-emerald-600" />
-              <span>Normal status (&lt; 50%). All clear.</span>
-            </div>
-          )}
+            {sendState === "idle" && status === "normal" && (
+              <motion.div
+                key="normal"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-2 bg-emerald-50/80 border border-emerald-200 rounded-xl px-3 py-2 text-xs text-emerald-800 font-medium"
+              >
+                <BellOff className="w-3.5 h-3.5 flex-shrink-0 text-emerald-600" />
+                <span>Normal status (&lt; 50%). All clear.</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -344,34 +460,62 @@ export default function SimulationPage() {
     emailInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  return (
-    <div className="min-h-screen bg-[#f7faf8]">
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
 
-      {/* ── Hero Section ── */}
-      <section className="bg-white border-b border-emerald-100 px-4 py-10 text-center">
-        <div className="max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-full mb-3 border border-emerald-200">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+  return (
+    <div className="min-h-screen bg-[#f7faf8] overflow-x-hidden">
+
+      {/* ── Hero Section with Framer Motion ── */}
+      <section className="bg-white border-b border-emerald-100 px-4 py-12 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-3xl mx-auto"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 text-xs font-bold px-3.5 py-1.5 rounded-full mb-4 border border-emerald-200 shadow-2xs"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
             Software Simulation Lab — No Hardware Required
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-emerald-950 leading-tight mb-3">
+          </motion.div>
+
+          <h1 className="text-3xl sm:text-5xl font-black text-emerald-950 leading-tight mb-3">
             🔬 Interactive IoT Waste Simulation
           </h1>
+
           <p className="text-zinc-600 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
             Experience the real-life behavior of <strong className="text-emerald-950">DustbinTracker</strong>.
             Configure your email below, then adjust any dustbin&apos;s distance slider. 
             When distance reaches <strong className="text-red-600">≤ 20 cm (≥ 80% full)</strong>, 
             an instant critical overflow alert email will be automatically dispatched to your inbox!
           </p>
-        </div>
+        </motion.div>
       </section>
 
-      {/* ── Prominent Email Activation Card (No sticky overlap/clipping) ── */}
-      <section className="max-w-4xl mx-auto px-4 -mt-5">
-        <div className="bg-white rounded-2xl border-2 border-emerald-200 shadow-lg shadow-emerald-900/5 p-5 sm:p-6 transition-all">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-emerald-100 text-emerald-700">
+      {/* ── Prominent Email Activation Card with Motion ── */}
+      <section className="max-w-4xl mx-auto px-4 -mt-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          whileHover={{ y: -2, transition: { duration: 0.2 } }}
+          className="bg-white rounded-2xl border-2 border-emerald-200 shadow-lg shadow-emerald-900/5 p-5 sm:p-6 transition-all"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-700 shadow-2xs">
                 <AtSign className="w-5 h-5" />
               </div>
               <div>
@@ -384,24 +528,47 @@ export default function SimulationPage() {
               </div>
             </div>
 
-            {/* Validation Badge */}
-            <div className="self-start sm:self-auto">
-              {emailValid ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                  Live Dispatch Active
-                </span>
-              ) : sharedEmail ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 border border-red-300">
-                  <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
-                  Invalid Email Format
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                  <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
-                  Email Required
-                </span>
-              )}
+            {/* Validation Badge with AnimatePresence */}
+            <div className="self-start sm:self-auto min-h-[30px] flex items-center">
+              <AnimatePresence mode="wait">
+                {emailValid ? (
+                  <motion.span
+                    key="valid"
+                    initial={{ opacity: 0, scale: 0.85, y: -4 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.85, y: 4 }}
+                    transition={{ duration: 0.2 }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300"
+                  >
+                    <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                    Live Dispatch Active
+                  </motion.span>
+                ) : sharedEmail ? (
+                  <motion.span
+                    key="invalid"
+                    initial={{ opacity: 0, scale: 0.85, y: -4 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.85, y: 4 }}
+                    transition={{ duration: 0.2 }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 border border-red-300"
+                  >
+                    <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
+                    Invalid Email Format
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="required"
+                    initial={{ opacity: 0, scale: 0.85, y: -4 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.85, y: 4 }}
+                    transition={{ duration: 0.2 }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300"
+                  >
+                    <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
+                    Email Required
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -439,12 +606,17 @@ export default function SimulationPage() {
               </span>
             )}
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* ── How It Works Architecture Section ── */}
+      {/* ── How It Works Pipeline Section ── */}
       <section className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl border border-emerald-100 shadow-sm p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.25 }}
+          className="bg-white rounded-2xl border border-emerald-100 shadow-sm p-6"
+        >
           <div className="flex items-center gap-2 mb-4">
             <Info className="w-5 h-5 text-emerald-600" />
             <h2 className="text-sm font-black text-emerald-950 uppercase tracking-wide">
@@ -458,7 +630,7 @@ export default function SimulationPage() {
             <div className="bg-violet-50/80 border border-violet-100 rounded-xl p-3.5">
               <div className="font-bold text-violet-900 text-xs mb-1">① Ultrasonic Distance Read</div>
               <p className="text-violet-700 text-xs leading-relaxed">
-                The HC-SR04 sensor bounces high-frequency sound waves. Closer distance to top means fuller bin.
+                The HC-SR04 sensor bounces sound waves. Closer distance to top means fuller bin.
               </p>
             </div>
             <div className="bg-sky-50/80 border border-sky-100 rounded-xl p-3.5">
@@ -474,10 +646,10 @@ export default function SimulationPage() {
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* ── 6 Smart Dustbins Grid ── */}
+      {/* ── 6 Smart Dustbins Grid with Motion Stagger ── */}
       <section className="max-w-7xl mx-auto px-4 pb-16">
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
@@ -495,8 +667,13 @@ export default function SimulationPage() {
           </div>
         </div>
 
-        {/* 6 Responsive Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* 6 Responsive Cards Animated Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {BINS.map((bin, i) => (
             <BinCard
               key={bin.id}
@@ -507,10 +684,16 @@ export default function SimulationPage() {
               onFocusEmail={focusEmailInput}
             />
           ))}
-        </div>
+        </motion.div>
 
-        {/* Wokwi Hardware Link Card */}
-        <div className="mt-12 bg-white rounded-2xl border border-emerald-100 shadow-sm p-6 text-center max-w-3xl mx-auto">
+        {/* Wokwi Hardware Link Card with Motion */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          whileHover={{ y: -3 }}
+          className="mt-12 bg-white rounded-2xl border border-emerald-100 shadow-sm p-6 text-center max-w-3xl mx-auto"
+        >
           <div className="text-2xl mb-2">🔌</div>
           <h3 className="font-black text-emerald-950 text-base mb-1">
             Looking for the Virtual ESP32 Hardware Lab?
@@ -528,7 +711,7 @@ export default function SimulationPage() {
             <span>Open Wokwi Simulation Lab</span>
             <ChevronRight className="w-4 h-4" />
           </a>
-        </div>
+        </motion.div>
       </section>
 
     </div>
