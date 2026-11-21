@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Dustbin } from "@/models/Dustbin";
+import { TelemetryLog } from "@/models/TelemetryLog";
 import { sendCriticalAlertEmail } from "@/lib/nodemailer";
 
 /**
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
     // Connect and persist to MongoDB Atlas if connection string provided
     const conn = await connectToDatabase();
     let savedRecord = null;
+    let historyLogged = false;
 
     if (conn) {
       savedRecord = await Dustbin.findOneAndUpdate(
@@ -78,6 +80,25 @@ export async function POST(req: NextRequest) {
         },
         { upsert: true, new: true }
       );
+
+      // Save historical snapshot every 5 minutes (or immediately on critical threshold alert)
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      const recentLog = await TelemetryLog.findOne({
+        binId,
+        recordedAt: { $gte: fiveMinutesAgo },
+      }).sort({ recordedAt: -1 });
+
+      if (!recentLog || alertTriggered) {
+        await TelemetryLog.create({
+          binId,
+          fillLevel: computedFill,
+          distanceCm: distanceCm ?? (totalDepth - (computedFill * totalDepth) / 100),
+          status,
+          isAnomaly,
+          recordedAt: new Date(),
+        });
+        historyLogged = true;
+      }
     }
 
     // If critical threshold reached (>= 80%) without anomaly, dispatch automated Nodemailer alert
@@ -106,6 +127,7 @@ export async function POST(req: NextRequest) {
         timestamp: new Date().toISOString(),
       },
       persistedInDatabase: Boolean(conn),
+      historySnapshotSaved: historyLogged,
       emailAlert: emailResult,
       record: savedRecord,
     });

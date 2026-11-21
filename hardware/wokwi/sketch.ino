@@ -35,7 +35,9 @@ const char* WIFI_PASSWORD = "";
 const char* API_ENDPOINT = "https://dustbintracker.vercel.app/api/bins/telemetry";
 
 unsigned long lastSendTime = 0;
-const unsigned long SEND_INTERVAL_MS = 15000; // Send telemetry every 15 seconds
+// Periodic interval: Send and save to MongoDB every 5 minutes (300,000 ms)
+const unsigned long SEND_INTERVAL_MS = 5 * 60 * 1000; 
+bool lastWasCritical = false;
 
 void setup() {
   Serial.begin(115200);
@@ -92,74 +94,83 @@ float measureDistanceCm() {
 void loop() {
   unsigned long currentMillis = millis();
 
-  // Read and transmit every SEND_INTERVAL_MS
-  if (currentMillis - lastSendTime >= SEND_INTERVAL_MS || lastSendTime == 0) {
-    lastSendTime = currentMillis;
+  // Read distance from ultrasonic sensor
+  float distance = measureDistanceCm();
 
-    float distance = measureDistanceCm();
-
-    if (distance < 0 || distance > 400.0) {
-      Serial.println("[Sensor] Warning: Out of range or anomaly detected!");
-      return;
-    }
-
-    // Calculate Fill Percentage:
-    // Distance 0 cm -> 100% full (sensor touched by garbage)
-    // Distance 100 cm -> 0% full (empty bin)
+  if (distance >= 0 && distance <= 400.0) {
     float effectiveDistance = constrain(distance, 0.0, TOTAL_BIN_DEPTH_CM);
     float fillPercentage = ((TOTAL_BIN_DEPTH_CM - effectiveDistance) / TOTAL_BIN_DEPTH_CM) * 100.0;
     int roundedFill = round(fillPercentage);
+    bool isCritical = (roundedFill >= 80);
 
-    // Update Status LEDs
-    if (roundedFill >= 80) {
+    // Update Local Status LEDs immediately
+    if (isCritical) {
       digitalWrite(LED_CRITICAL_PIN, HIGH);
       digitalWrite(LED_NORMAL_PIN, LOW);
-      Serial.println("\n[STATUS] 🚨 CRITICAL THRESHOLD REACHED (>= 80%)!");
     } else {
       digitalWrite(LED_CRITICAL_PIN, LOW);
       digitalWrite(LED_NORMAL_PIN, HIGH);
-      Serial.println("\n[STATUS] 🟢 Normal / Moderate Fill Level");
     }
 
-    Serial.printf("Dustbin ID    : %s\n", DUSTBIN_ID);
-    Serial.printf("Raw Distance  : %.2f cm\n", distance);
-    Serial.printf("Fill Level    : %d %%\n", roundedFill);
+    // Trigger condition:
+    // 1. Initial startup (lastSendTime == 0)
+    // 2. Periodic 5-minute interval reached (300,000 ms)
+    // 3. Urgent overflow event: Bin suddenly crosses 80% without waiting 5 minutes
+    bool shouldSendUpdate = (lastSendTime == 0) ||
+                            (currentMillis - lastSendTime >= SEND_INTERVAL_MS) ||
+                            (isCritical && !lastWasCritical);
 
-    // Send HTTP POST Telemetry to Next.js Cloud API
-    if (WiFi.status() == WL_CONNECTED) {
-      HTTPClient http;
-      http.begin(API_ENDPOINT);
-      http.addHeader("Content-Type", "application/json");
+    if (shouldSendUpdate) {
+      lastSendTime = currentMillis;
+      lastWasCritical = isCritical;
 
-      StaticJsonDocument<200> doc;
-      doc["binId"] = DUSTBIN_ID;
-      doc["distanceCm"] = distance;
-      doc["fillLevel"] = roundedFill;
-
-      String requestBody;
-      serializeJson(doc, requestBody);
-
-      Serial.print("[HTTP] Sending POST payload: ");
-      Serial.println(requestBody);
-
-      int httpResponseCode = http.POST(requestBody);
-
-      if (httpResponseCode > 0) {
-        String response = http.getString();
-        Serial.printf("[HTTP] Server Response Code: %d\n", httpResponseCode);
-        Serial.println("[HTTP] Server Response: " + response);
+      if (isCritical) {
+        Serial.println("\n[STATUS] 🚨 CRITICAL FILL DETECTED (>= 80%)! Triggering urgent alert...");
       } else {
-        Serial.printf("[HTTP] Error sending POST: %s\n", http.errorToString(httpResponseCode).c_str());
+        Serial.println("\n[STATUS] ⏱️ 5-Minute Periodic Update Cycle");
       }
 
-      http.end();
-    } else {
-      Serial.println("[WiFi] Lost connection. Reconnecting...");
-      WiFi.reconnect();
-    }
+      Serial.printf("Dustbin ID    : %s\n", DUSTBIN_ID);
+      Serial.printf("Distance      : %.2f cm\n", distance);
+      Serial.printf("Fill Level    : %d %%\n", roundedFill);
 
-    Serial.println("------------------------------------------");
+      // Transmit telemetry to Cloud Backend (MongoDB Atlas via Vercel)
+      if (WiFi.status() == WL_CONNECTED) {
+        HTTPClient http;
+        http.begin(API_ENDPOINT);
+        http.addHeader("Content-Type", "application/json");
+
+        StaticJsonDocument<200> doc;
+        doc["binId"] = DUSTBIN_ID;
+        doc["distanceCm"] = distance;
+        doc["fillLevel"] = roundedFill;
+
+        String requestBody;
+        serializeJson(doc, requestBody);
+
+        Serial.print("[HTTP] Transmitting payload to MongoDB: ");
+        Serial.println(requestBody);
+
+        int httpResponseCode = http.POST(requestBody);
+
+        if (httpResponseCode > 0) {
+          String response = http.getString();
+          Serial.printf("[HTTP] Success (Status %d) - Saved in MongoDB!\n", httpResponseCode);
+          Serial.println("[HTTP] Server Response: " + response);
+        } else {
+          Serial.printf("[HTTP] Failed to transmit: %s\n", http.errorToString(httpResponseCode).c_str());
+        }
+
+        http.end();
+      } else {
+        Serial.println("[WiFi] Reconnecting to Wi-Fi...");
+        WiFi.reconnect();
+      }
+
+      Serial.println("[Schedule] Next regular MongoDB update in 5 minutes (300s)...");
+      Serial.println("------------------------------------------------------------");
+    }
   }
 
-  delay(100);
+  delay(2000); // Check sensor every 2 seconds
 }
