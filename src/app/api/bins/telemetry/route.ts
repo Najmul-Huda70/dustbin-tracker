@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Dustbin } from "@/models/Dustbin";
+import { sendCriticalAlertEmail } from "@/lib/nodemailer";
 
 /**
  * Endpoint for ESP32 / Wokwi IoT Hardware Telemetry
@@ -79,6 +80,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // If critical threshold reached (>= 80%) without anomaly, dispatch automated Nodemailer alert
+    let emailResult = null;
+    if (alertTriggered) {
+      emailResult = await sendCriticalAlertEmail({
+        binId,
+        fillLevel: computedFill,
+        distanceCm,
+        zone: savedRecord?.zone || "Dhanmondi",
+        locationName: savedRecord?.name || "Smart IoT Dustbin",
+        moderatorEmail: savedRecord?.moderatorEmail,
+      });
+    }
+
     return NextResponse.json({
       success: true,
       message: "Telemetry processed successfully",
@@ -92,6 +106,7 @@ export async function POST(req: NextRequest) {
         timestamp: new Date().toISOString(),
       },
       persistedInDatabase: Boolean(conn),
+      emailAlert: emailResult,
       record: savedRecord,
     });
   } catch (error: unknown) {

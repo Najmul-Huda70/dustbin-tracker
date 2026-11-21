@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Report } from "@/models/Report";
+import { sendCitizenReportAlertEmail } from "@/lib/nodemailer";
 
 export async function GET(req: NextRequest) {
   try {
@@ -56,6 +57,13 @@ export async function POST(req: NextRequest) {
         reportedAt: new Date(),
       });
     }
+
+    // Trigger Nodemailer alert to responsible moderator in background
+    sendCitizenReportAlertEmail({
+      dustbinId,
+      problemCategory,
+      reportedAt: savedReport?.reportedAt || new Date(),
+    }).catch((err) => console.error("[Nodemailer] Report alert failed:", err));
 
     return NextResponse.json(
       {
