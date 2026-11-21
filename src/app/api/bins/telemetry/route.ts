@@ -68,6 +68,7 @@ export async function POST(req: NextRequest) {
             status,
             isAnomaly,
             lastReportedAt: new Date(),
+            moderatorEmail: process.env.DEFAULT_MODERATOR_EMAIL || "tempostand7@gmail.com",
           },
           $setOnInsert: {
             name: `Smart Bin ${binId}`,
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
             latitude: 23.7465,
             longitude: 90.376,
             totalDepthCm: totalDepth,
-            moderatorEmail: "moderator@dustbintracker.org",
+            moderatorEmail: process.env.DEFAULT_MODERATOR_EMAIL || "tempostand7@gmail.com",
           },
         },
         { upsert: true, new: true }
@@ -110,7 +111,10 @@ export async function POST(req: NextRequest) {
         distanceCm,
         zone: savedRecord?.zone || "Dhanmondi",
         locationName: savedRecord?.name || "Smart IoT Dustbin",
-        moderatorEmail: savedRecord?.moderatorEmail,
+        moderatorEmail:
+          process.env.DEFAULT_MODERATOR_EMAIL ||
+          savedRecord?.moderatorEmail ||
+          "tempostand7@gmail.com",
       });
     }
 

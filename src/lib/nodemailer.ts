@@ -58,11 +58,12 @@ export async function sendCriticalAlertEmail(payload: CriticalAlertPayload) {
     moderatorEmail,
   } = payload;
 
+  // Prioritize configured moderator email (tempostand7@gmail.com)
   const recipient =
-    moderatorEmail ||
     process.env.DEFAULT_MODERATOR_EMAIL ||
-    process.env.SMTP_USER ||
-    process.env.EMAIL_USER;
+    (moderatorEmail && !moderatorEmail.includes("dustbintracker.org") ? moderatorEmail : null) ||
+    process.env.EMAIL_USER ||
+    "tempostand7@gmail.com";
 
   const transporter = getTransporter();
 
@@ -186,11 +187,12 @@ export async function sendCitizenReportAlertEmail(payload: CitizenReportPayload)
     moderatorEmail,
   } = payload;
 
+  // Prioritize configured moderator email (tempostand7@gmail.com)
   const recipient =
-    moderatorEmail ||
     process.env.DEFAULT_MODERATOR_EMAIL ||
-    process.env.SMTP_USER ||
-    process.env.EMAIL_USER;
+    (moderatorEmail && !moderatorEmail.includes("dustbintracker.org") ? moderatorEmail : null) ||
+    process.env.EMAIL_USER ||
+    "tempostand7@gmail.com";
 
   const transporter = getTransporter();
 

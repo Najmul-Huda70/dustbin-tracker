@@ -15,7 +15,7 @@ const defaultSampleBins = [
     fillLevel: 82,
     status: "critical",
     isAnomaly: false,
-    moderatorEmail: "moderator.dhanmondi@dustbintracker.org",
+    moderatorEmail: "tempostand7@gmail.com",
   },
   {
     binId: "BIN-DHK-104",
