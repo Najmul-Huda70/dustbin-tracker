@@ -1,0 +1,2 @@
+# Wokwi Libraries for DustbinTracker ESP32 Node
+ArduinoJson
