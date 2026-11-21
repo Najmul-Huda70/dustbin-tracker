@@ -10,12 +10,12 @@ import {
   Layers,
   Radio,
   Clock,
-  AlertTriangle,
   ChevronRight,
   FlaskConical,
   Compass,
   Navigation,
   RefreshCw,
+  Sparkles,
 } from "lucide-react";
 
 // ─── 6 Real-World Dhaka Demo Dustbins (Matches Simulation Page) ───────────────
@@ -37,34 +37,19 @@ export interface MapDustbin {
 
 const INITIAL_BINS: MapDustbin[] = [
   {
-    id: "BIN-SIM-001",
-    name: "Dhanmondi Lake Bin",
-    zone: "Dhanmondi",
-    location: "Road 27, Near Lake Park Walkway",
-    lat: 23.7465,
-    lng: 90.376,
-    xPct: 36.5,
-    yPct: 71.5,
-    fillLevel: 86,
-    distanceCm: 14,
-    fillRatePerHour: 7.5,
-    lastUpdated: "Just now",
-    landmark: "Dhanmondi Lake",
-  },
-  {
-    id: "BIN-SIM-002",
-    name: "Gulshan Circle Bin",
-    zone: "Gulshan",
-    location: "Gulshan Avenue, Circle-1 Roundabout",
-    lat: 23.7782,
-    lng: 90.418,
-    xPct: 78.0,
-    yPct: 55.5,
-    fillLevel: 38,
-    distanceCm: 62,
-    fillRatePerHour: 5.0,
-    lastUpdated: "2 mins ago",
-    landmark: "Gulshan-1 Circle",
+    id: "BIN-SIM-005",
+    name: "Uttara Sector 7 Bin",
+    zone: "Uttara",
+    location: "Sector 7, Main Avenue & Park Gate",
+    lat: 23.8683,
+    lng: 90.3995,
+    xPct: 52.0,
+    yPct: 18.0,
+    fillLevel: 22,
+    distanceCm: 78,
+    fillRatePerHour: 3.5,
+    lastUpdated: "1 min ago",
+    landmark: "Uttara Sector 7 Park",
   },
   {
     id: "BIN-SIM-003",
@@ -73,13 +58,43 @@ const INITIAL_BINS: MapDustbin[] = [
     location: "Mirpur 10 Metro Pillar 24",
     lat: 23.8071,
     lng: 90.3686,
-    xPct: 29.0,
-    yPct: 41.5,
+    xPct: 28.0,
+    yPct: 38.0,
     fillLevel: 74,
     distanceCm: 26,
     fillRatePerHour: 6.8,
     lastUpdated: "3 mins ago",
     landmark: "Mirpur-10 Metro",
+  },
+  {
+    id: "BIN-SIM-002",
+    name: "Gulshan Circle Bin",
+    zone: "Gulshan",
+    location: "Gulshan Avenue, Circle-1 Roundabout",
+    lat: 23.7782,
+    lng: 90.418,
+    xPct: 70.0,
+    yPct: 50.0,
+    fillLevel: 38,
+    distanceCm: 62,
+    fillRatePerHour: 5.0,
+    lastUpdated: "2 mins ago",
+    landmark: "Gulshan-1 Circle",
+  },
+  {
+    id: "BIN-SIM-001",
+    name: "Dhanmondi Lake Bin",
+    zone: "Dhanmondi",
+    location: "Road 27, Near Lake Park Walkway",
+    lat: 23.7465,
+    lng: 90.376,
+    xPct: 35.0,
+    yPct: 68.0,
+    fillLevel: 86,
+    distanceCm: 14,
+    fillRatePerHour: 7.5,
+    lastUpdated: "Just now",
+    landmark: "Dhanmondi Lake",
   },
   {
     id: "BIN-SIM-004",
@@ -88,28 +103,13 @@ const INITIAL_BINS: MapDustbin[] = [
     location: "Shapla Square Commercial Zone",
     lat: 23.7289,
     lng: 90.4172,
-    xPct: 77.0,
-    yPct: 80.5,
+    xPct: 68.0,
+    yPct: 76.0,
     fillLevel: 45,
     distanceCm: 55,
     fillRatePerHour: 4.2,
     lastUpdated: "4 mins ago",
     landmark: "Shapla Square",
-  },
-  {
-    id: "BIN-SIM-005",
-    name: "Uttara Sector 7 Bin",
-    zone: "Uttara",
-    location: "Sector 7, Main Avenue & Park Gate",
-    lat: 23.8683,
-    lng: 90.3995,
-    xPct: 59.5,
-    yPct: 11.0,
-    fillLevel: 22,
-    distanceCm: 78,
-    fillRatePerHour: 3.5,
-    lastUpdated: "1 min ago",
-    landmark: "Uttara Sector 7 Park",
   },
   {
     id: "BIN-SIM-006",
@@ -118,8 +118,8 @@ const INITIAL_BINS: MapDustbin[] = [
     location: "Sadarghat Launch Terminal Gate 2",
     lat: 23.7058,
     lng: 90.4125,
-    xPct: 72.5,
-    yPct: 92.0,
+    xPct: 60.0,
+    yPct: 88.0,
     fillLevel: 92,
     distanceCm: 8,
     fillRatePerHour: 9.0,
@@ -130,18 +130,18 @@ const INITIAL_BINS: MapDustbin[] = [
 
 // Helper: Calculate estimated time until full
 function getTimeUntilFull(fillLevel: number, fillRate: number) {
-  if (fillLevel >= 95) {
+  if (fillLevel >= 90) {
     return {
-      text: "Overflowing! (< 15 mins)",
-      badgeColor: "bg-red-600 text-white",
+      text: "🚨 Overflowing! Immediate pickup (< 15m)",
+      badgeColor: "bg-red-600 text-white border-red-700",
       urgent: true,
       etaHours: 0.2,
     };
   }
   if (fillLevel >= 80) {
     return {
-      text: "Critical: ~45 mins left",
-      badgeColor: "bg-red-500 text-white",
+      text: "⚠️ Critical: ~45 mins left until overflow",
+      badgeColor: "bg-red-500 text-white border-red-600",
       urgent: true,
       etaHours: 0.75,
     };
@@ -161,8 +161,8 @@ function getTimeUntilFull(fillLevel: number, fillRate: number) {
 
   const badgeColor =
     fillLevel >= 50
-      ? "bg-amber-100 text-amber-800 border border-amber-300"
-      : "bg-emerald-100 text-emerald-800 border border-emerald-300";
+      ? "bg-amber-100 text-amber-900 border border-amber-300"
+      : "bg-emerald-100 text-emerald-900 border border-emerald-300";
 
   return {
     text,
@@ -177,7 +177,6 @@ export default function MapPage() {
   const [statusFilter, setStatusFilter] = useState<"ALL" | "CRITICAL" | "ATTENTION" | "NORMAL">("ALL");
   const [selectedZone, setSelectedZone] = useState<string>("ALL");
   const [hoveredBinId, setHoveredBinId] = useState<string | null>(null);
-  const [activeBinId, setActiveBinId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"interactive" | "google">("interactive");
 
   const zones = useMemo(() => ["ALL", "Dhanmondi", "Gulshan", "Mirpur", "Motijheel", "Uttara", "Old Dhaka"], []);
@@ -206,11 +205,6 @@ export default function MapPage() {
     });
   }, [searchQuery, statusFilter, selectedZone]);
 
-  const activeOrHoveredBin = useMemo(() => {
-    const targetId = hoveredBinId || activeBinId;
-    return INITIAL_BINS.find((b) => b.id === targetId) || null;
-  }, [hoveredBinId, activeBinId]);
-
   return (
     <div className="min-h-screen bg-[#f7faf8] py-8 sm:py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -227,8 +221,7 @@ export default function MapPage() {
               Dhaka Smart Dustbins Live Map
             </h1>
             <p className="text-sm text-zinc-600 mt-1 max-w-2xl">
-              Real-time geospatial tracking of all 6 smart waste monitoring bins. 
-              Hover over any dustbin icon on the map to see its <strong>fill level</strong> and <strong>estimated time until full</strong>.
+              Hover over any dustbin on the map to see its <strong>live fill level</strong> and <strong>estimated time until full</strong>.
             </p>
           </div>
 
@@ -336,441 +329,373 @@ export default function MapPage() {
           </div>
         </div>
 
-        {/* ── Main Map Canvas & Side List Layout ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* ── FULL-WIDTH MAP CANVAS (NO RIGHT SIDEBAR) ── */}
+        <div className="w-full bg-white rounded-3xl border border-emerald-200 shadow-md p-2 sm:p-3 relative">
 
-          {/* Map Viewer (8 cols) */}
-          <div className="lg:col-span-8 bg-white rounded-3xl border border-emerald-200 shadow-sm overflow-hidden relative">
+          {viewMode === "interactive" ? (
+            /* We allow overflow-visible on container so popovers floating on edges are NEVER clipped! */
+            <div className="relative w-full h-[660px] sm:h-[720px] bg-[#edf4f0] rounded-2xl select-none overflow-hidden">
+              
+              {/* Visual Dhaka Cartographic Canvas */}
+              <svg className="absolute inset-0 w-full h-full opacity-45 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="dhakaGrid" width="45" height="45" patternUnits="userSpaceOnUse">
+                    <path d="M 45 0 L 0 0 0 45" fill="none" stroke="#059669" strokeWidth="0.5" strokeOpacity="0.18" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#dhakaGrid)" />
 
-            {viewMode === "interactive" ? (
-              <div className="relative w-full h-[620px] bg-[#f0f5f2] overflow-hidden select-none">
-                
-                {/* Visual Dhaka Cartographic Background */}
-                <svg className="absolute inset-0 w-full h-full opacity-40 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Grid Lines */}
-                  <defs>
-                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#10b981" strokeWidth="0.5" strokeOpacity="0.15" />
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#grid)" />
-
-                  {/* Buriganga River Curve at bottom (Old Dhaka) */}
-                  <path
-                    d="M 0 580 Q 250 560 500 590 T 1000 610"
-                    fill="none"
-                    stroke="#38bdf8"
-                    strokeWidth="32"
-                    strokeLinecap="round"
-                    opacity="0.6"
-                  />
-                  {/* Turag River curve at west */}
-                  <path
-                    d="M 80 0 Q 60 250 110 500"
-                    fill="none"
-                    stroke="#38bdf8"
-                    strokeWidth="18"
-                    strokeLinecap="round"
-                    opacity="0.4"
-                  />
-                  {/* Dhanmondi Lake */}
-                  <ellipse cx="36%" cy="71%" rx="28" ry="14" fill="#38bdf8" opacity="0.6" />
-                  {/* Gulshan & Banani Lake */}
-                  <path
-                    d="M 720 280 Q 750 360 760 420"
-                    fill="none"
-                    stroke="#38bdf8"
-                    strokeWidth="16"
-                    opacity="0.6"
-                  />
-                  {/* Major Highway Arteries */}
-                  <line x1="60%" y1="0" x2="75%" y2="600" stroke="#94a3b8" strokeWidth="4" strokeDasharray="6 4" opacity="0.3" />
-                  <line x1="30%" y1="200" x2="80%" y2="500" stroke="#94a3b8" strokeWidth="3" opacity="0.25" />
-                </svg>
-
-                {/* Map Landmarks Labels */}
-                <div className="absolute top-4 left-6 text-[11px] font-black uppercase tracking-wider text-emerald-900/60 bg-white/70 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-emerald-100">
-                  📍 Dhaka Metropolitan Area
-                </div>
-                <div className="absolute top-[8%] left-[62%] text-[10px] font-bold text-zinc-500 pointer-events-none">
-                  Uttara
-                </div>
-                <div className="absolute top-[38%] left-[24%] text-[10px] font-bold text-zinc-500 pointer-events-none">
-                  Mirpur
-                </div>
-                <div className="absolute top-[52%] left-[80%] text-[10px] font-bold text-zinc-500 pointer-events-none">
-                  Gulshan / Banani
-                </div>
-                <div className="absolute top-[68%] left-[28%] text-[10px] font-bold text-zinc-500 pointer-events-none">
-                  Dhanmondi
-                </div>
-                <div className="absolute top-[78%] left-[80%] text-[10px] font-bold text-zinc-500 pointer-events-none">
-                  Motijheel
-                </div>
-                <div className="absolute bottom-6 left-[65%] text-[10px] font-bold text-sky-700 pointer-events-none">
-                  🌊 Buriganga River (Old Dhaka)
-                </div>
-
-                {/* ── 6 Interactive Dustbin Pins ── */}
-                {filteredBins.map((bin) => {
-                  const isHovered = hoveredBinId === bin.id;
-                  const isActive = activeBinId === bin.id;
-                  const isCritical = bin.fillLevel >= 80;
-                  const isAttention = bin.fillLevel >= 50 && bin.fillLevel < 80;
-
-                  const pinColor = isCritical
-                    ? "bg-red-600 text-white shadow-red-500/40"
-                    : isAttention
-                    ? "bg-amber-500 text-white shadow-amber-500/40"
-                    : "bg-emerald-600 text-white shadow-emerald-500/40";
-
-                  const pulseRing = isCritical
-                    ? "border-red-500 bg-red-400"
-                    : isAttention
-                    ? "border-amber-500 bg-amber-400"
-                    : "border-emerald-500 bg-emerald-400";
-
-                  return (
-                    <div
-                      key={bin.id}
-                      style={{
-                        position: "absolute",
-                        left: `${bin.xPct}%`,
-                        top: `${bin.yPct}%`,
-                        transform: "translate(-50%, -50%)",
-                      }}
-                      className="z-20 cursor-pointer"
-                      onMouseEnter={() => setHoveredBinId(bin.id)}
-                      onMouseLeave={() => setHoveredBinId(null)}
-                      onClick={() => setActiveBinId(bin.id)}
-                    >
-                      {/* Pulsing beacon radar */}
-                      <span
-                        className={`absolute -inset-3 rounded-full opacity-60 animate-ping pointer-events-none ${pulseRing}`}
-                      />
-
-                      {/* Main Pin Icon */}
-                      <motion.div
-                        animate={{
-                          scale: isHovered || isActive ? 1.3 : 1,
-                          y: isHovered || isActive ? -6 : 0,
-                        }}
-                        transition={{ duration: 0.2 }}
-                        className={`relative w-10 h-10 rounded-2xl flex flex-col items-center justify-center shadow-lg border-2 border-white transition-all ${pinColor}`}
-                      >
-                        <MapPin className="w-5 h-5 fill-current" />
-                        <span className="text-[8px] font-black leading-none mt-0.5">
-                          {bin.fillLevel}%
-                        </span>
-                      </motion.div>
-
-                      {/* Mini Label Badge */}
-                      <div className="absolute top-11 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-md shadow-xs border border-zinc-200 text-[10px] font-bold text-zinc-800 whitespace-nowrap pointer-events-none">
-                        {bin.name.split(" ")[0]}
-                      </div>
-
-                      {/* ── Hover Popover Card ── */}
-                      <AnimatePresence>
-                        {isHovered && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: -8 }}
-                            exit={{ opacity: 0, scale: 0.9, y: 6 }}
-                            transition={{ duration: 0.18 }}
-                            style={{
-                              position: "absolute",
-                              bottom: "100%",
-                              left: "50%",
-                              transform: "translateX(-50%)",
-                            }}
-                            className="z-50 w-72 pointer-events-auto shadow-2xl rounded-2xl bg-white/98 backdrop-blur-md border border-emerald-200 p-4 mb-2 text-zinc-800"
-                          >
-                            {/* Card Header */}
-                            <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-zinc-100">
-                              <div>
-                                <span className="font-mono text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                                  {bin.id}
-                                </span>
-                                <h4 className="text-sm font-black text-emerald-950 mt-1 leading-snug">
-                                  {bin.name}
-                                </h4>
-                                <p className="text-xs text-zinc-500 mt-0.5">{bin.location}</p>
-                              </div>
-                              <span
-                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                                  isCritical
-                                    ? "bg-red-100 text-red-700"
-                                    : isAttention
-                                    ? "bg-amber-100 text-amber-700"
-                                    : "bg-emerald-100 text-emerald-700"
-                                }`}
-                              >
-                                {isCritical ? "Critical" : isAttention ? "Attention" : "Normal"}
-                              </span>
-                            </div>
-
-                            {/* Fill Level Metric Bar */}
-                            <div className="py-2.5">
-                              <div className="flex items-center justify-between text-xs mb-1">
-                                <span className="font-bold text-zinc-600">Current Waste Fill:</span>
-                                <span
-                                  className="font-black text-sm font-mono"
-                                  style={{
-                                    color: isCritical ? "#dc2626" : isAttention ? "#d97706" : "#059669",
-                                  }}
-                                >
-                                  {bin.fillLevel}% ({100 - bin.distanceCm} cm waste)
-                                </span>
-                              </div>
-                              <div className="w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden border border-zinc-200">
-                                <div
-                                  className={`h-full transition-all duration-300 ${
-                                    isCritical ? "bg-red-600" : isAttention ? "bg-amber-500" : "bg-emerald-500"
-                                  }`}
-                                  style={{ width: `${bin.fillLevel}%` }}
-                                />
-                              </div>
-                              <div className="flex justify-between text-[10px] text-zinc-400 mt-1 font-mono">
-                                <span>Sensor Dist: {bin.distanceCm} cm</span>
-                                <span>Capacity: 100 cm</span>
-                              </div>
-                            </div>
-
-                            {/* ⏱️ "Kotokkon por fillup hobe" (Estimated Time Until Full) */}
-                            {(() => {
-                              const eta = getTimeUntilFull(bin.fillLevel, bin.fillRatePerHour);
-                              return (
-                                <div className={`p-2.5 rounded-xl text-xs font-semibold flex items-start gap-2 ${eta.badgeColor}`}>
-                                  <Clock className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                                  <div>
-                                    <div className="text-[10px] uppercase tracking-wide opacity-80">
-                                      Estimated Time to Full:
-                                    </div>
-                                    <div className="font-bold text-xs">{eta.text}</div>
-                                  </div>
-                                </div>
-                              );
-                            })()}
-
-                            {/* Quick Action Link */}
-                            <div className="mt-3 pt-2.5 border-t border-zinc-100 flex items-center justify-between text-xs font-bold text-emerald-700">
-                              <Link
-                                href="/simulation"
-                                className="flex items-center gap-1 hover:text-emerald-900 transition-colors"
-                              >
-                                <FlaskConical className="w-3.5 h-3.5" />
-                                <span>Test in Simulation Lab</span>
-                                <ChevronRight className="w-3 h-3" />
-                              </Link>
-                              <span className="text-[10px] font-normal text-zinc-400">
-                                Updated {bin.lastUpdated}
-                              </span>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
-
-                {/* Map Control Floating Badges */}
-                <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md px-3 py-2 rounded-2xl border border-emerald-200 shadow-md text-xs font-semibold text-zinc-700 flex items-center gap-3">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-600" />
-                    <span>≥80% Full</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                    <span>50-79%</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-600" />
-                    <span>&lt;50% Normal</span>
-                  </div>
-                </div>
-
-                <div className="absolute top-4 right-4 flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      setSearchQuery("");
-                      setStatusFilter("ALL");
-                      setSelectedZone("ALL");
-                    }}
-                    className="p-2 rounded-xl bg-white/90 hover:bg-white text-zinc-600 hover:text-emerald-700 border border-emerald-200 shadow-sm transition-all"
-                    title="Reset Map Filter"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ) : (
-              /* Google Maps Iframe Fallback */
-              <div className="w-full h-[620px] relative">
-                <iframe
-                  title="Google Live Dustbin Map"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  allowFullScreen
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://maps.google.com/maps?q=Dhaka+Bangladesh&t=&z=13&ie=UTF8&iwloc=&output=embed`}
-                  className="w-full h-full"
+                {/* Buriganga River Curve at south (Old Dhaka) */}
+                <path
+                  d="M 0 630 Q 300 600 650 635 T 1400 650"
+                  fill="none"
+                  stroke="#38bdf8"
+                  strokeWidth="38"
+                  strokeLinecap="round"
+                  opacity="0.65"
                 />
+                {/* Turag River curve at west */}
+                <path
+                  d="M 120 0 Q 90 320 150 600"
+                  fill="none"
+                  stroke="#38bdf8"
+                  strokeWidth="20"
+                  strokeLinecap="round"
+                  opacity="0.45"
+                />
+                {/* Dhanmondi Lake */}
+                <ellipse cx="35%" cy="68%" rx="35" ry="16" fill="#38bdf8" opacity="0.65" />
+                {/* Gulshan & Banani Lake */}
+                <path
+                  d="M 680 300 Q 720 380 730 450"
+                  fill="none"
+                  stroke="#38bdf8"
+                  strokeWidth="22"
+                  strokeLinecap="round"
+                  opacity="0.65"
+                />
+                {/* Major Highway Arteries */}
+                <line x1="52%" y1="0" x2="65%" y2="720" stroke="#94a3b8" strokeWidth="5" strokeDasharray="8 6" opacity="0.35" />
+                <line x1="25%" y1="240" x2="80%" y2="560" stroke="#94a3b8" strokeWidth="4" opacity="0.3" />
+              </svg>
+
+              {/* Map Landmarks Labels */}
+              <div className="absolute top-4 left-5 text-[11px] font-black uppercase tracking-wider text-emerald-900 bg-white/80 backdrop-blur-xs px-3 py-1.5 rounded-xl border border-emerald-200 shadow-2xs">
+                📍 Dhaka Metropolitan Area
               </div>
-            )}
+              
+              <div className="absolute top-[12%] left-[54%] text-xs font-bold text-zinc-500 pointer-events-none">
+                Uttara Sector 7
+              </div>
+              <div className="absolute top-[34%] left-[22%] text-xs font-bold text-zinc-500 pointer-events-none">
+                Mirpur-10
+              </div>
+              <div className="absolute top-[46%] left-[72%] text-xs font-bold text-zinc-500 pointer-events-none">
+                Gulshan Circle-1
+              </div>
+              <div className="absolute top-[64%] left-[26%] text-xs font-bold text-zinc-500 pointer-events-none">
+                Dhanmondi Lake
+              </div>
+              <div className="absolute top-[73%] left-[71%] text-xs font-bold text-zinc-500 pointer-events-none">
+                Motijheel Commercial
+              </div>
+              <div className="absolute bottom-6 left-[56%] text-xs font-bold text-sky-800 pointer-events-none">
+                🌊 Buriganga Riverfront (Old Dhaka)
+              </div>
+
+              {/* ── 6 Interactive Dustbin Pins on Map ── */}
+              {filteredBins.map((bin) => {
+                const isHovered = hoveredBinId === bin.id;
+                const isCritical = bin.fillLevel >= 80;
+                const isAttention = bin.fillLevel >= 50 && bin.fillLevel < 80;
+
+                const pinColor = isCritical
+                  ? "bg-red-600 text-white shadow-red-500/50"
+                  : isAttention
+                  ? "bg-amber-500 text-white shadow-amber-500/50"
+                  : "bg-emerald-600 text-white shadow-emerald-500/50";
+
+                const pulseRing = isCritical
+                  ? "border-red-500 bg-red-400"
+                  : isAttention
+                  ? "border-amber-500 bg-amber-400"
+                  : "border-emerald-500 bg-emerald-400";
+
+                // Intelligent Popover Placement: Never cut off at edges!
+                const isNearTop = bin.yPct < 30; // e.g. Uttara -> place popover BELOW pin
+                const isNearRight = bin.xPct > 60; // e.g. Gulshan, Motijheel, Sadarghat -> anchor right edge
+                const isNearLeft = bin.xPct < 30; // e.g. Mirpur -> anchor left edge
+
+                const popoverPositionStyle: React.CSSProperties = {
+                  position: "absolute",
+                  ...(isNearTop ? { top: "110%" } : { bottom: "110%" }),
+                  ...(isNearRight
+                    ? { right: "-10px" }
+                    : isNearLeft
+                    ? { left: "-10px" }
+                    : { left: "50%", transform: "translateX(-50%)" }),
+                };
+
+                return (
+                  <div
+                    key={bin.id}
+                    style={{
+                      position: "absolute",
+                      left: `${bin.xPct}%`,
+                      top: `${bin.yPct}%`,
+                      transform: "translate(-50%, -50%)",
+                    }}
+                    className={`cursor-pointer ${isHovered ? "z-50" : "z-20"}`}
+                    onMouseEnter={() => setHoveredBinId(bin.id)}
+                    onMouseLeave={() => setHoveredBinId(null)}
+                  >
+                    {/* Pulsing beacon ring */}
+                    <span
+                      className={`absolute -inset-3.5 rounded-full opacity-60 animate-ping pointer-events-none ${pulseRing}`}
+                    />
+
+                    {/* Pin Marker */}
+                    <motion.div
+                      animate={{
+                        scale: isHovered ? 1.35 : 1,
+                        y: isHovered ? -6 : 0,
+                      }}
+                      transition={{ duration: 0.2 }}
+                      className={`relative w-11 h-11 rounded-2xl flex flex-col items-center justify-center shadow-lg border-2 border-white transition-all ${pinColor}`}
+                    >
+                      <MapPin className="w-5 h-5 fill-current" />
+                      <span className="text-[9px] font-black leading-none mt-0.5">
+                        {bin.fillLevel}%
+                      </span>
+                    </motion.div>
+
+                    {/* Bottom Pin Label */}
+                    <div className="absolute top-12 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-xs px-2.5 py-0.5 rounded-md shadow-xs border border-zinc-200 text-[10px] font-bold text-zinc-800 whitespace-nowrap pointer-events-none">
+                      {bin.name.split(" ")[0]}
+                    </div>
+
+                    {/* ── Hover Popover Card (Properly Positioned Directly Above Location) ── */}
+                    <AnimatePresence>
+                      {isHovered && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.92, y: isNearTop ? -8 : 8 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.92, y: isNearTop ? -8 : 8 }}
+                          transition={{ duration: 0.16 }}
+                          style={popoverPositionStyle}
+                          className="w-80 shadow-2xl rounded-2xl bg-white border-2 border-emerald-200 p-4 text-zinc-800 z-50 pointer-events-auto"
+                        >
+                          {/* Card Header */}
+                          <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-zinc-100">
+                            <div>
+                              <span className="font-mono text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                {bin.id}
+                              </span>
+                              <h4 className="text-sm font-black text-emerald-950 mt-1 leading-snug">
+                                {bin.name}
+                              </h4>
+                              <p className="text-xs text-zinc-500 mt-0.5 leading-tight">{bin.location}</p>
+                            </div>
+                            <span
+                              className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase whitespace-nowrap ${
+                                isCritical
+                                  ? "bg-red-100 text-red-700 border border-red-200"
+                                  : isAttention
+                                  ? "bg-amber-100 text-amber-800 border border-amber-200"
+                                  : "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                              }`}
+                            >
+                              {bin.fillLevel}% {isCritical ? "Critical" : isAttention ? "Attention" : "Normal"}
+                            </span>
+                          </div>
+
+                          {/* Waste Fill Level Bar */}
+                          <div className="py-2.5">
+                            <div className="flex items-center justify-between text-xs mb-1">
+                              <span className="font-bold text-zinc-600">Current Waste Fill:</span>
+                              <span
+                                className="font-black text-sm font-mono"
+                                style={{
+                                  color: isCritical ? "#dc2626" : isAttention ? "#d97706" : "#059669",
+                                }}
+                              >
+                                {bin.fillLevel}% ({100 - bin.distanceCm} cm waste)
+                              </span>
+                            </div>
+                            <div className="w-full h-3 bg-zinc-100 rounded-full overflow-hidden border border-zinc-200">
+                              <div
+                                className={`h-full transition-all duration-300 ${
+                                  isCritical ? "bg-red-600" : isAttention ? "bg-amber-500" : "bg-emerald-500"
+                                }`}
+                                style={{ width: `${bin.fillLevel}%` }}
+                              />
+                            </div>
+                            <div className="flex justify-between text-[10px] text-zinc-400 mt-1 font-mono">
+                              <span>Sensor Distance: {bin.distanceCm} cm</span>
+                              <span>Total Depth: 100 cm</span>
+                            </div>
+                          </div>
+
+                          {/* ⏱️ "Kotokkon por fillup hobe" (Estimated Time Until Full) */}
+                          {(() => {
+                            const eta = getTimeUntilFull(bin.fillLevel, bin.fillRatePerHour);
+                            return (
+                              <div className={`p-2.5 rounded-xl text-xs font-semibold flex items-start gap-2 ${eta.badgeColor}`}>
+                                <Clock className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <div className="text-[10px] uppercase font-bold tracking-wide opacity-80">
+                                    ESTIMATED TIME UNTIL FULL:
+                                  </div>
+                                  <div className="font-black text-xs leading-snug">{eta.text}</div>
+                                </div>
+                              </div>
+                            );
+                          })()}
+
+                          {/* Quick Actions & Links */}
+                          <div className="mt-3 pt-2.5 border-t border-zinc-100 flex items-center justify-between text-xs font-bold text-emerald-700">
+                            <Link
+                              href="/simulation"
+                              className="flex items-center gap-1 hover:text-emerald-900 transition-colors"
+                            >
+                              <FlaskConical className="w-3.5 h-3.5 text-blue-600" />
+                              <span>Test in Simulation Lab</span>
+                              <ChevronRight className="w-3 h-3" />
+                            </Link>
+                            <span className="text-[10px] font-normal text-zinc-400">
+                              Updated {bin.lastUpdated}
+                            </span>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+
+              {/* Floating Legend Badge at Bottom Left */}
+              <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-emerald-200 shadow-md text-xs font-bold text-zinc-700 flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-3 h-3 rounded-full bg-red-600" />
+                  <span>≥80% Critical</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-3 h-3 rounded-full bg-amber-500" />
+                  <span>50-79% Attention</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-3 h-3 rounded-full bg-emerald-600" />
+                  <span>&lt;50% Normal</span>
+                </div>
+              </div>
+
+              {/* Reset Map Filter button at top right */}
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setStatusFilter("ALL");
+                    setSelectedZone("ALL");
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 hover:bg-white text-zinc-700 hover:text-emerald-700 border border-emerald-200 shadow-sm text-xs font-bold transition-all"
+                  title="Reset Map Filter"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Reset Filter</span>
+                </button>
+              </div>
+
+            </div>
+          ) : (
+            /* Google Maps View */
+            <div className="w-full h-[660px] sm:h-[720px] rounded-2xl overflow-hidden relative">
+              <iframe
+                title="Google Live Dustbin Map"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://maps.google.com/maps?q=Dhaka+Bangladesh&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                className="w-full h-full"
+              />
+            </div>
+          )}
+
+        </div>
+
+        {/* ── Bottom Summary Row: 6 Bins Status Strip ── */}
+        <div className="mt-6 bg-white rounded-3xl border border-emerald-100 shadow-sm p-5">
+          <div className="flex items-center justify-between mb-3 pb-2 border-b border-zinc-100">
+            <h3 className="text-xs font-black uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
+              <Radio className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+              Real-Time Monitored Dustbins Summary ({filteredBins.length})
+            </h3>
+            <span className="text-xs text-zinc-400">Hover over any pin above to see details</span>
           </div>
 
-          {/* ── Dustbin List & Time Predictor Sidebar (4 cols) ── */}
-          <div className="lg:col-span-4 flex flex-col gap-4">
-            
-            {/* Active Selected Bin Details Card */}
-            {activeOrHoveredBin && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-3xl border-2 border-emerald-300 shadow-md p-5"
-              >
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="font-mono text-xs font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full">
-                    {activeOrHoveredBin.id}
-                  </span>
-                  <span
-                    className={`text-xs font-black px-2.5 py-0.5 rounded-full ${
-                      activeOrHoveredBin.fillLevel >= 80
-                        ? "bg-red-100 text-red-700"
-                        : activeOrHoveredBin.fillLevel >= 50
-                        ? "bg-amber-100 text-amber-700"
-                        : "bg-emerald-100 text-emerald-700"
-                    }`}
-                  >
-                    {activeOrHoveredBin.fillLevel}% FULL
-                  </span>
-                </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            {filteredBins.map((bin) => {
+              const eta = getTimeUntilFull(bin.fillLevel, bin.fillRatePerHour);
+              const isCritical = bin.fillLevel >= 80;
+              const isAttention = bin.fillLevel >= 50 && bin.fillLevel < 80;
 
-                <h3 className="text-base font-black text-emerald-950">{activeOrHoveredBin.name}</h3>
-                <p className="text-xs text-zinc-500 mt-0.5">{activeOrHoveredBin.location}</p>
-
-                {/* Estimated Time Badge */}
-                {(() => {
-                  const eta = getTimeUntilFull(activeOrHoveredBin.fillLevel, activeOrHoveredBin.fillRatePerHour);
-                  return (
-                    <div className={`mt-3 p-3 rounded-2xl flex items-center gap-2.5 ${eta.badgeColor}`}>
-                      <Clock className="w-5 h-5 flex-shrink-0" />
-                      <div>
-                        <div className="text-[10px] uppercase font-bold tracking-wide opacity-80">
-                          Estimated Time Until Full:
-                        </div>
-                        <div className="font-black text-sm">{eta.text}</div>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-zinc-100 text-xs">
-                  <div>
-                    <span className="text-zinc-400 block text-[10px]">Zone</span>
-                    <strong className="text-zinc-800 font-bold">{activeOrHoveredBin.zone}</strong>
-                  </div>
-                  <div>
-                    <span className="text-zinc-400 block text-[10px]">Sensor Distance</span>
-                    <strong className="text-zinc-800 font-bold">{activeOrHoveredBin.distanceCm} cm</strong>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex gap-2">
-                  <Link
-                    href={`/report?binId=${encodeURIComponent(activeOrHoveredBin.id)}`}
-                    className="flex-1 text-center py-2 px-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-bold transition-colors"
-                  >
-                    Report Issue
-                  </Link>
-                  <Link
-                    href="/simulation"
-                    className="flex-1 text-center py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-xs"
-                  >
-                    Simulate Bin
-                  </Link>
-                </div>
-              </motion.div>
-            )}
-
-            {/* List of All 6 Dustbins */}
-            <div className="bg-white rounded-3xl border border-emerald-100 shadow-sm p-4 sm:p-5 flex-1 flex flex-col">
-              <div className="flex items-center justify-between mb-3 pb-2 border-b border-zinc-100">
-                <h3 className="text-xs font-black uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
-                  Monitored Dustbins ({filteredBins.length})
-                </h3>
-                <span className="text-[11px] text-zinc-400 font-semibold">Hover to locate</span>
-              </div>
-
-              <div className="space-y-2.5 overflow-y-auto max-h-[460px] pr-1">
-                {filteredBins.map((bin) => {
-                  const isHovered = hoveredBinId === bin.id;
-                  const isActive = activeBinId === bin.id;
-                  const eta = getTimeUntilFull(bin.fillLevel, bin.fillRatePerHour);
-
-                  return (
-                    <div
-                      key={bin.id}
-                      onMouseEnter={() => setHoveredBinId(bin.id)}
-                      onMouseLeave={() => setHoveredBinId(null)}
-                      onClick={() => setActiveBinId(bin.id)}
-                      className={`p-3 rounded-2xl border transition-all cursor-pointer ${
-                        isHovered || isActive
-                          ? "bg-emerald-50/80 border-emerald-400 shadow-xs scale-[1.01]"
-                          : "bg-white border-zinc-100 hover:border-emerald-200"
+              return (
+                <div
+                  key={bin.id}
+                  onMouseEnter={() => setHoveredBinId(bin.id)}
+                  onMouseLeave={() => setHoveredBinId(null)}
+                  className={`p-3 rounded-2xl border transition-all cursor-pointer ${
+                    hoveredBinId === bin.id
+                      ? "bg-emerald-50 border-emerald-400 shadow-sm scale-102"
+                      : "bg-[#f7faf8] border-zinc-200/80 hover:border-emerald-300"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="font-bold text-xs text-zinc-900 truncate">{bin.name.split(" ")[0]}</span>
+                    <span
+                      className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${
+                        isCritical
+                          ? "bg-red-100 text-red-700"
+                          : isAttention
+                          ? "bg-amber-100 text-amber-800"
+                          : "bg-emerald-100 text-emerald-800"
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-1.5">
-                        <span className="font-bold text-xs text-zinc-900 truncate">
-                          {bin.name}
-                        </span>
-                        <span
-                          className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                            bin.fillLevel >= 80
-                              ? "bg-red-100 text-red-700"
-                              : bin.fillLevel >= 50
-                              ? "bg-amber-100 text-amber-700"
-                              : "bg-emerald-100 text-emerald-700"
-                          }`}
-                        >
-                          {bin.fillLevel}%
-                        </span>
-                      </div>
-
-                      <div className="text-[11px] text-zinc-500 mt-0.5 truncate">{bin.location}</div>
-
-                      {/* Estimated time indicator */}
-                      <div className="mt-2 flex items-center justify-between text-[11px] font-semibold text-zinc-600 pt-1.5 border-t border-zinc-100/80">
-                        <span className="flex items-center gap-1 text-zinc-500">
-                          <Clock className="w-3 h-3 text-emerald-600" />
-                          Full in:
-                        </span>
-                        <span
-                          className={`font-bold ${
-                            eta.urgent ? "text-red-600" : "text-emerald-800"
-                          }`}
-                        >
-                          {eta.text}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {filteredBins.length === 0 && (
-                  <div className="text-center py-10 text-zinc-400 text-xs">
-                    <AlertTriangle className="w-8 h-8 text-amber-400 mx-auto mb-2" />
-                    No dustbins matched your search or filters.
+                      {bin.fillLevel}%
+                    </span>
                   </div>
-                )}
-              </div>
-            </div>
-
+                  <div className="text-[10px] text-zinc-500 truncate mt-0.5">{bin.zone}</div>
+                  <div className="mt-2 text-[10px] font-semibold text-zinc-600 flex items-center gap-1">
+                    <Clock className="w-2.5 h-2.5 text-emerald-600" />
+                    <span className="truncate">{eta.text.replace("Approx. ", "")}</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
+        </div>
 
+        {/* ── Link to Simulation Lab ── */}
+        <div className="mt-8 bg-white rounded-2xl border border-emerald-100 shadow-sm p-6 text-center max-w-2xl mx-auto">
+          <div className="inline-flex p-2 rounded-xl bg-emerald-100 text-emerald-700 mb-2">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <h3 className="font-black text-emerald-950 text-base mb-1">
+            Want to test these sensor fill levels in real time?
+          </h3>
+          <p className="text-zinc-600 text-xs sm:text-sm mb-4 leading-relaxed">
+            Go to the <strong>Simulation Lab</strong> to adjust the distance slider for each of these 6 bins and receive instant email overflow alerts!
+          </p>
+          <Link
+            href="/simulation"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white text-xs shadow-md transition-all hover:scale-[1.02]"
+          >
+            <FlaskConical className="w-4 h-4" />
+            <span>Open Interactive Simulation Lab</span>
+            <ChevronRight className="w-4 h-4" />
+          </Link>
         </div>
 
       </div>
