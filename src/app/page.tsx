@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView, animate } from "framer-motion";
+import ModelViewer3D from "@/components/ModelViewer3D";
 import {
   Wifi,
   BellRing,
@@ -18,7 +19,8 @@ import {
   Trash2,
   Scan,
   ShieldAlert,
-  Sparkles
+  Sparkles,
+  Radio,
 } from "lucide-react";
 
 /* ─── Reusable animation helpers ─── */
@@ -149,6 +151,107 @@ export default function HomePage() {
 
   return (
     <div className="overflow-x-hidden">
+
+      {/* ══════════════════════════════════════════════════
+          TOP SECTION — 3D IOT DIGITAL TWIN HERO SHOWCASE
+      ══════════════════════════════════════════════════ */}
+      <section className="relative bg-gradient-to-b from-[#eef8f3] via-white to-[#f7faf8] border-b border-emerald-100/90 pt-10 pb-16 sm:pt-14 sm:pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            
+            {/* Left Column (5 cols): 3D Architecture Story & Features */}
+            <div className="lg:col-span-5 flex flex-col gap-5">
+              <FadeSlideIn direction="left" delay={0.05}>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/90 border border-emerald-300 text-emerald-900 text-xs font-black shadow-2xs">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>3D Digital Twin • Interactive IoT Node</span>
+                </div>
+              </FadeSlideIn>
+
+              <FadeSlideIn direction="left" delay={0.15}>
+                <h1 className="text-3xl sm:text-4xl xl:text-5xl font-black text-emerald-950 leading-[1.15] tracking-tight">
+                  Meet the Smart Bin.{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+                    Engineered in 3D.
+                  </span>
+                </h1>
+              </FadeSlideIn>
+
+              <FadeSlideIn direction="left" delay={0.25}>
+                <p className="text-sm sm:text-base text-zinc-600 leading-relaxed">
+                  Rotate, zoom, and inspect our custom IoT smart dustbin in full 360° 3D. 
+                  Equipped with an <strong>ESP32 microcontroller</strong>, downward-firing 
+                  <strong> HC-SR04 ultrasonic sensor</strong>, and automated Wi-Fi telemetry to prevent municipal overflow.
+                </p>
+              </FadeSlideIn>
+
+              {/* 3 Key Spec Badges */}
+              <FadeSlideIn direction="left" delay={0.35}>
+                <div className="space-y-2.5 pt-1">
+                  <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-emerald-100 shadow-2xs">
+                    <div className="p-2 rounded-xl bg-emerald-50 text-emerald-700 mt-0.5">
+                      <Radio className="w-4 h-4 animate-pulse" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-emerald-950">Ultrasonic Depth Waves</div>
+                      <div className="text-[11px] text-zinc-500">Continuous millimeter-accurate distance measurement to waste surface.</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-emerald-100 shadow-2xs">
+                    <div className="p-2 rounded-xl bg-sky-50 text-sky-700 mt-0.5">
+                      <Cpu className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-emerald-950">ESP32 Wi-Fi Node</div>
+                      <div className="text-[11px] text-zinc-500">Auto-transmits real-time fill percentage to MongoDB Atlas cloud.</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-emerald-100 shadow-2xs">
+                    <div className="p-2 rounded-xl bg-orange-50 text-orange-700 mt-0.5">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-emerald-950">Instant Overflow Alerts</div>
+                      <div className="text-[11px] text-zinc-500">Triggers Nodemailer dispatch the instant waste crosses ≥80% capacity.</div>
+                    </div>
+                  </div>
+                </div>
+              </FadeSlideIn>
+
+              {/* Quick CTAs */}
+              <FadeSlideIn direction="left" delay={0.45}>
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <Link
+                    href="/simulation"
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white text-xs shadow-md shadow-emerald-600/20 transition-all hover:scale-102"
+                  >
+                    <span>Launch 6-Bin Simulation</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+
+                  <Link
+                    href="/map"
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold bg-white hover:bg-emerald-50 text-emerald-950 text-xs border border-emerald-200 shadow-2xs transition-all hover:scale-102"
+                  >
+                    <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>View Live Dhaka Map</span>
+                  </Link>
+                </div>
+              </FadeSlideIn>
+            </div>
+
+            {/* Right Column (7 cols): The 3D Model Viewer */}
+            <div className="lg:col-span-7">
+              <FadeSlideIn direction="right" delay={0.1}>
+                <ModelViewer3D modelPath="/models/smart_city_iot_dustbin.glb" />
+              </FadeSlideIn>
+            </div>
+
+          </div>
+        </div>
+      </section>
 
       {/* ══════════════════════════════════
           SECTION 1 — HERO
