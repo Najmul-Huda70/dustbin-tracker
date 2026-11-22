@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView, animate } from "framer-motion";
+import SmartBin3D from "@/components/SmartBin3D";
 import {
   Wifi,
   BellRing,
@@ -158,18 +159,9 @@ export default function HomePage() {
         <div className="absolute top-0 right-0 w-[600px] h-[500px] bg-emerald-200/30 rounded-full blur-3xl -z-10 pointer-events-none" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Image */}
+          {/* Left: Interactive 3D Smart Dustbin Model */}
           <FadeSlideIn direction="left">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-emerald-900/10 border border-emerald-100">
-              <Image
-                src="/Smart%20Bin%2C%20Greener%20Tomorrow.png"
-                alt="Citizens using DustbinTracker smart bin"
-                width={760}
-                height={510}
-                className="w-full h-auto object-cover"
-                priority
-              />
-            </div>
+            <SmartBin3D initialFill={65} />
           </FadeSlideIn>
 
           {/* Right: Text */}
