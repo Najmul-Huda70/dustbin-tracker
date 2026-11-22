@@ -4,7 +4,6 @@ import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView, animate } from "framer-motion";
-import ModelViewer3D from "@/components/ModelViewer3D";
 import {
   Wifi,
   BellRing,
@@ -208,107 +207,6 @@ export default function HomePage() {
 
   return (
     <div className="overflow-x-hidden">
-
-      {/* ══════════════════════════════════════════════════
-          TOP SECTION — 3D IOT DIGITAL TWIN HERO SHOWCASE
-      ══════════════════════════════════════════════════ */}
-      <section className="relative bg-gradient-to-b from-[#eef8f3] via-white to-[#f7faf8] border-b border-emerald-100/90 pt-10 pb-16 sm:pt-14 sm:pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            
-            {/* Left Column (5 cols): 3D Architecture Story & Features */}
-            <div className="lg:col-span-5 flex flex-col gap-5">
-              <FadeSlideIn direction="left" delay={0.05}>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/90 border border-emerald-300 text-emerald-900 text-xs font-black shadow-2xs">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
-                  <span>3D Digital Twin • Interactive IoT Node</span>
-                </div>
-              </FadeSlideIn>
-
-              <FadeSlideIn direction="left" delay={0.15}>
-                <h1 className="text-3xl sm:text-4xl xl:text-5xl font-black text-emerald-950 leading-[1.15] tracking-tight">
-                  Meet the Smart Bin.{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
-                    Engineered in 3D.
-                  </span>
-                </h1>
-              </FadeSlideIn>
-
-              <FadeSlideIn direction="left" delay={0.25}>
-                <p className="text-sm sm:text-base text-zinc-600 leading-relaxed">
-                  Rotate, zoom, and inspect our custom IoT smart dustbin in full 360° 3D. 
-                  Equipped with an <strong>ESP32 microcontroller</strong>, downward-firing 
-                  <strong> HC-SR04 ultrasonic sensor</strong>, and automated Wi-Fi telemetry to prevent municipal overflow.
-                </p>
-              </FadeSlideIn>
-
-              {/* 3 Key Spec Badges */}
-              <FadeSlideIn direction="left" delay={0.35}>
-                <div className="space-y-2.5 pt-1">
-                  <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-emerald-100 shadow-2xs">
-                    <div className="p-2 rounded-xl bg-emerald-50 text-emerald-700 mt-0.5">
-                      <Radio className="w-4 h-4 animate-pulse" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-emerald-950">Ultrasonic Depth Waves</div>
-                      <div className="text-[11px] text-zinc-500">Continuous millimeter-accurate distance measurement to waste surface.</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-emerald-100 shadow-2xs">
-                    <div className="p-2 rounded-xl bg-sky-50 text-sky-700 mt-0.5">
-                      <Cpu className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-emerald-950">ESP32 Wi-Fi Node</div>
-                      <div className="text-[11px] text-zinc-500">Auto-transmits real-time fill percentage to MongoDB Atlas cloud.</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-emerald-100 shadow-2xs">
-                    <div className="p-2 rounded-xl bg-orange-50 text-orange-700 mt-0.5">
-                      <Mail className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-emerald-950">Instant Overflow Alerts</div>
-                      <div className="text-[11px] text-zinc-500">Triggers Nodemailer dispatch the instant waste crosses ≥80% capacity.</div>
-                    </div>
-                  </div>
-                </div>
-              </FadeSlideIn>
-
-              {/* Quick CTAs */}
-              <FadeSlideIn direction="left" delay={0.45}>
-                <div className="flex flex-wrap items-center gap-3 pt-2">
-                  <Link
-                    href="/simulation"
-                    className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white text-xs shadow-md shadow-emerald-600/20 transition-all hover:scale-102"
-                  >
-                    <span>Launch 6-Bin Simulation</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-
-                  <Link
-                    href="/map"
-                    className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold bg-white hover:bg-emerald-50 text-emerald-950 text-xs border border-emerald-200 shadow-2xs transition-all hover:scale-102"
-                  >
-                    <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>View Live Dhaka Map</span>
-                  </Link>
-                </div>
-              </FadeSlideIn>
-            </div>
-
-            {/* Right Column (7 cols): The 3D Model Viewer */}
-            <div className="lg:col-span-7">
-              <FadeSlideIn direction="right" delay={0.1}>
-                <ModelViewer3D modelPath="/models/smart_city_iot_dustbin.glb" />
-              </FadeSlideIn>
-            </div>
-
-          </div>
-        </div>
-      </section>
 
       {/* ══════════════════════════════════
           SECTION 1 — HERO
@@ -828,188 +726,67 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════
-          NEW SECTION — HARDWARE CUTAWAY ANATOMY
+          SECTION — 3D IOT VIDEO SHOWCASE
       ══════════════════════════════════════════════════ */}
       <section className="bg-gradient-to-b from-white via-[#f4faf6] to-white py-20 sm:py-28 border-b border-emerald-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Section Header */}
           <FadeSlideIn direction="up">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/80 border border-emerald-300 text-emerald-900 text-xs font-black shadow-2xs mb-3">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
-                Hardware Anatomy & Inside Architecture
+            <div className="text-center max-w-3xl mx-auto mb-14">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/90 border border-emerald-300 text-emerald-900 text-xs font-black shadow-2xs mb-3">
+                <Play className="w-3.5 h-3.5 fill-emerald-800 text-emerald-800" />
+                3D Motion Hardware Demonstration
               </span>
               <h2 className="text-3xl sm:text-5xl font-black text-emerald-950 leading-tight">
-                Engineering Inside Out: Transparent Civic Smart Bin
+                Smart Waste in Motion: 3D IoT Showcase
               </h2>
               <p className="text-sm sm:text-base text-zinc-600 mt-3 leading-relaxed">
-                Take a transparent look inside the DustbinTracker hardware ecosystem — combining real-time ultrasonic depth sensing, dual status LEDs, and instant citizen reporting into one unified industrial design.
+                Watch the DustbinTracker hardware module in 360° motion — engineered with sleek urban aesthetics, downward-firing acoustic sonar radar, and real-time municipal telemetry.
               </p>
             </div>
           </FadeSlideIn>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Left: High-Res 3D Cutaway Image (7 cols) */}
-            <div className="lg:col-span-7">
-              <FadeSlideIn direction="left" delay={0.1}>
-                <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-emerald-200/80 bg-white group">
-                  <Image
-                    src="/images/smart-bin-cutaway-architecture.jpg"
-                    alt="Smart Dustbin Hardware Cutaway Anatomy"
-                    width={1024}
-                    height={585}
-                    className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                  />
-                  {/* Floating Specs Overlay Badge */}
-                  <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/70 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 text-white text-xs font-bold">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>Cutaway 3D Architecture View</span>
-                  </div>
-                </div>
-              </FadeSlideIn>
-            </div>
+          {/* Centered Video Showcase Player */}
+          <FadeSlideIn direction="up" delay={0.15}>
+            <div className="max-w-4xl mx-auto">
+              <VideoShowcasePlayer />
 
-            {/* Right: 4 Integrated Hardware Features (5 cols) */}
-            <div className="lg:col-span-5 flex flex-col gap-3.5">
-              <FadeSlideIn direction="right" delay={0.15}>
-                <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-emerald-200/80 shadow-sm">
-                  <div className="p-2.5 rounded-xl bg-violet-100 text-violet-700 mt-0.5">
-                    <Radio className="w-5 h-5 animate-pulse" />
+              {/* Hardware Feature Highlights */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+                <div className="p-4 rounded-2xl bg-white border border-emerald-100 shadow-2xs flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-700">
+                    <Radio className="w-4 h-4 animate-pulse" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-black text-emerald-950">HC-SR04 Sonar Soundwave Array</h3>
-                    <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
-                      Emits 40kHz ultrasonic pulses to bounce off the waste surface. Computes millimeter-accurate fill percentage regardless of trash shape.
-                    </p>
+                    <div className="text-xs font-bold text-emerald-950">Acoustic Sonar Radar</div>
+                    <div className="text-[11px] text-zinc-500">Continuous 40kHz surface depth scan</div>
                   </div>
                 </div>
-              </FadeSlideIn>
 
-              <FadeSlideIn direction="right" delay={0.25}>
-                <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-emerald-200/80 shadow-sm">
-                  <div className="p-2.5 rounded-xl bg-red-100 text-red-700 mt-0.5">
-                    <ShieldAlert className="w-5 h-5" />
+                <div className="p-4 rounded-2xl bg-white border border-emerald-100 shadow-2xs flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-sky-50 text-sky-700">
+                    <Cpu className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-black text-emerald-950">Dual-Status LED Matrix</h3>
-                    <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
-                      Instant civic feedback: glowing <strong>SYSTEM ONLINE</strong> (green) for normal levels, shifting to high-intensity <strong>CRITICAL BIN FULL</strong> (red) at ≥80%.
-                    </p>
+                    <div className="text-xs font-bold text-emerald-950">ESP32 Core Microcontroller</div>
+                    <div className="text-[11px] text-zinc-500">Real-time Wi-Fi cloud synchronization</div>
                   </div>
                 </div>
-              </FadeSlideIn>
 
-              <FadeSlideIn direction="right" delay={0.35}>
-                <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-emerald-200/80 shadow-sm">
-                  <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-700 mt-0.5">
-                    <QrCode className="w-5 h-5" />
+                <div className="p-4 rounded-2xl bg-white border border-emerald-100 shadow-2xs flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-red-50 text-red-700">
+                    <ShieldAlert className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-black text-emerald-950">Scan-to-Report QR Matrix</h3>
-                    <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
-                      Citizens can point their smartphone camera directly at the waterproof sticker to file an overflow or damage report in seconds — no app install needed.
-                    </p>
+                    <div className="text-xs font-bold text-emerald-950">Automated Status LEDs</div>
+                    <div className="text-[11px] text-zinc-500">Glow shifting at critical ≥80% fill</div>
                   </div>
                 </div>
-              </FadeSlideIn>
-
-              <FadeSlideIn direction="right" delay={0.45}>
-                <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-emerald-200/80 shadow-sm">
-                  <div className="p-2.5 rounded-xl bg-sky-100 text-sky-700 mt-0.5">
-                    <Cpu className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-black text-emerald-950">ESP32 + Wi-Fi Antenna Node</h3>
-                    <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
-                      Dual-core processor automatically packages JSON telemetry payloads and synchronizes with MongoDB Atlas every 5 minutes.
-                    </p>
-                  </div>
-                </div>
-              </FadeSlideIn>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════
-          NEW SECTION — 3D CINEMATIC VIDEO & DESIGN VARIANTS
-      ══════════════════════════════════════════════════ */}
-      <section className="bg-white py-20 sm:py-28 border-b border-emerald-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          {/* Section Header */}
-          <FadeSlideIn direction="up">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-black shadow-2xs mb-3">
-                <Play className="w-3.5 h-3.5 fill-blue-700 text-blue-700" />
-                3D Motion Showcase & Urban Deployment
-              </span>
-              <h2 className="text-3xl sm:text-5xl font-black text-emerald-950 leading-tight">
-                Smart Waste in Motion: Real-World Visuals
-              </h2>
-              <p className="text-sm sm:text-base text-zinc-600 mt-3 leading-relaxed">
-                Watch the DustbinTracker hardware module in motion, engineered with sleek urban aesthetics, 360° sonar radar rings, and rugged outdoor weatherproofing.
-              </p>
+              </div>
             </div>
           </FadeSlideIn>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            
-            {/* Left: 3D Video Player */}
-            <FadeSlideIn direction="left" delay={0.1}>
-              <div className="flex flex-col gap-3">
-                <VideoShowcasePlayer />
-                <div className="flex items-center justify-between text-xs text-zinc-500 font-semibold px-2">
-                  <span>📹 3D Animated Turntable Motion</span>
-                  <span>⚡ 60 FPS Smooth Render</span>
-                </div>
-              </div>
-            </FadeSlideIn>
-
-            {/* Right: Urban Minimalist Pod Image & Deployment Highlights */}
-            <FadeSlideIn direction="right" delay={0.2}>
-              <div className="flex flex-col gap-5">
-                <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-emerald-200/80 bg-white group">
-                  <Image
-                    src="/images/smart-bin-urban-minimalist.jpg"
-                    alt="Smart Urban Minimalist Dustbin Pod"
-                    width={1024}
-                    height={585}
-                    className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                  />
-                  <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/70 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 text-white text-xs font-bold">
-                    <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
-                    <span>Urban Minimalist Pod Variant</span>
-                  </div>
-                </div>
-
-                {/* Macro Sensor Close-up Strip */}
-                <div className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-200">
-                  <div className="relative w-28 h-20 rounded-xl overflow-hidden shadow-md flex-shrink-0 border border-emerald-200">
-                    <Image
-                      src="/images/smart-bin-sensor-closeup.jpg"
-                      alt="HC-SR04 Sensor Macro Closeup"
-                      width={510}
-                      height={292}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-black uppercase tracking-wider text-emerald-950">
-                      Precision IoT Sensor Pod
-                    </h3>
-                    <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
-                      Water-resistant sensor housing with dual acoustic transducers and direct GPIO link to the ESP32.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </FadeSlideIn>
-
-          </div>
         </div>
       </section>
 
